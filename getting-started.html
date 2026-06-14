@@ -52,6 +52,7 @@
       <a href="api/mc3-objects.html">Object Types</a>
       <a href="api/mc3-materials.html">Materials &amp; Textures</a>
       <a href="api/mc3-animation.html">Animation</a>
+      <a href="api/mc3-interactive.html">Interactive Actions</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Tutorials</div>
@@ -61,6 +62,7 @@
       <a href="tutorials/csg-operations.html">CSG Operations</a>
       <a href="tutorials/export-gltf.html">Export to glTF/GLB</a>
       <a href="tutorials/animation.html">Keyframe Animation</a>
+      <a href="tutorials/complete-example.html">Complete Scene Example</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Internals</div>
@@ -172,6 +174,8 @@ cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)</code></pre>
 ./cmake-build-debug/MeshCraft test/house.mc3.xml --screenshot /tmp/editor.ppm</code></pre>
 
     <h2>Keyboard Shortcuts</h2>
+
+    <h3>File Operations</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
@@ -181,30 +185,88 @@ cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)</code></pre>
           <tr><td><code>Ctrl+S</code></td><td>Save</td></tr>
           <tr><td><code>Ctrl+Shift+S</code></td><td>Save As</td></tr>
           <tr><td><code>Ctrl+E</code></td><td>Export to GLB (via mc3togltf)</td></tr>
-          <tr><td><code>Ctrl+Z</code></td><td>Undo</td></tr>
+          <tr><td><code>F11</code></td><td>Save screenshot to <code>screenshot.ppm</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Edit Operations</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>Ctrl+Z</code></td><td>Undo (up to 20 steps)</td></tr>
           <tr><td><code>Ctrl+Y</code></td><td>Redo</td></tr>
           <tr><td><code>Ctrl+D</code></td><td>Duplicate selection</td></tr>
-          <tr><td><code>Ctrl+A</code></td><td>Select all objects (if nothing selected) / select all children in group</td></tr>
+          <tr><td><code>Ctrl+A</code></td><td>Select all objects (or all children in group)</td></tr>
           <tr><td><code>Ctrl+G</code></td><td>Group selected objects</td></tr>
           <tr><td><code>Ctrl+Shift+G</code></td><td>Ungroup selected group</td></tr>
           <tr><td><code>Ctrl+X / C / V</code></td><td>Cut / Copy / Paste</td></tr>
           <tr><td><code>Delete</code></td><td>Delete selected objects</td></tr>
+          <tr><td><code>Ctrl+Up / Down</code></td><td>Reorder selected object among its siblings in hierarchy</td></tr>
+          <tr><td><code>Ctrl+Shift+P</code></td><td>Copy properties from active object to all selected</td></tr>
+          <tr><td><code>P</code></td><td>Select parent of currently selected object</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Transform Tools</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
           <tr><td><code>Q</code></td><td>Select tool (no gizmo)</td></tr>
           <tr><td><code>G</code></td><td>Move (Translate) gizmo</td></tr>
           <tr><td><code>R</code></td><td>Rotate gizmo</td></tr>
           <tr><td><code>S</code></td><td>Scale gizmo</td></tr>
-          <tr><td><code>F</code></td><td>Focus camera on selection (or reset view if nothing selected)</td></tr>
+          <tr><td><code>Shift</code> (hold while dragging)</td><td>Vertex snap — snap position to nearest vertex of another object</td></tr>
+          <tr><td><code>Ctrl</code> (hold during rotate)</td><td>Angle snap — lock rotation to 15°/45°/90° increments</td></tr>
+          <tr><td><code>Arrow keys</code></td><td>Nudge selected object ±0.1 units on X/Y axis</td></tr>
+          <tr><td><code>Page Up / Page Down</code></td><td>Nudge selected object ±0.1 units on Z axis</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Viewport</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>F</code></td><td>Focus camera on selection (reset view if nothing selected)</td></tr>
+          <tr><td><code>Alt+W</code></td><td>Toggle full-scene wireframe overlay</td></tr>
+          <tr><td><code>B</code></td><td>Toggle bounding box display around selected objects</td></tr>
+          <tr><td>Viewport overlay buttons</td><td>Click Front / Top / Right / Perspective icons to snap to preset camera views</td></tr>
+          <tr><td>Ortho/Persp button (toolbar)</td><td>Toggle orthographic ↔ perspective projection</td></tr>
+          <tr><td>World/Local button (toolbar)</td><td>Toggle gizmo between world-space and local-space axes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Add Primitives</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
           <tr><td><code>F1</code></td><td>Add Box</td></tr>
           <tr><td><code>F2</code></td><td>Add Sphere</td></tr>
           <tr><td><code>F3</code></td><td>Add Cylinder</td></tr>
           <tr><td><code>F4</code></td><td>Add Cone</td></tr>
           <tr><td><code>F5</code></td><td>Add Plane</td></tr>
-          <tr><td><code>F11</code></td><td>Save screenshot to <code>screenshot.ppm</code></td></tr>
+          <tr><td>Menu: Add → Primitive</td><td>Torus, Capsule, Disk, Grid, Ico-sphere, Extrude, CSG Union/Difference/Intersection</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Animation &amp; Tools</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
           <tr><td><code>Ctrl+T</code></td><td>Toggle timeline panel</td></tr>
-          <tr><td><code>Space</code></td><td>Play/pause animation (when timeline is open)</td></tr>
-          <tr><td><code>Alt+W</code></td><td>Toggle edge wireframe overlay</td></tr>
-          <tr><td><code>Arrow keys</code></td><td>Nudge selected object ±0.1 units on X/Y axis</td></tr>
-          <tr><td><code>Page Up / Page Down</code></td><td>Nudge selected object ±0.1 units on Z axis</td></tr>
+          <tr><td><code>Space</code></td><td>Play / pause animation</td></tr>
+          <tr><td><code>K</code></td><td>Insert keyframe for selected object at current time</td></tr>
+          <tr><td><code>Ctrl+P</code></td><td>Open Command Palette (search objects and commands)</td></tr>
+          <tr><td><code>M</code></td><td>Activate Measurement Tool (click two points to show distance)</td></tr>
         </tbody>
       </table>
     </div>

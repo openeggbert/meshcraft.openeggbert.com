@@ -52,6 +52,7 @@
       <a href="api/mc3-objects.html">Object Types</a>
       <a href="api/mc3-materials.html">Materials &amp; Textures</a>
       <a href="api/mc3-animation.html">Animation</a>
+      <a href="api/mc3-interactive.html">Interactive Actions</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Tutorials</div>
@@ -61,6 +62,7 @@
       <a href="tutorials/csg-operations.html">CSG Operations</a>
       <a href="tutorials/export-gltf.html">Export to glTF/GLB</a>
       <a href="tutorials/animation.html">Keyframe Animation</a>
+      <a href="tutorials/complete-example.html">Complete Scene Example</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Internals</div>
@@ -107,7 +109,7 @@
       <span class="callout-icon">ℹ️</span>
       <div class="callout-body">
         <strong>Status</strong>
-        <p>MeshCraft is under active development. All core features (primitives, extrusion, CSG, materials, textures, lights, cameras, definitions, keyframe animation) are implemented and working. The project builds cleanly and passes its automated test suite.</p>
+        <p>MeshCraft is under active development. Core features are implemented and working: all primitive shapes (including Torus, Capsule, Disk, Grid, Ico-sphere), extrusion, CSG booleans, PBR materials, textures, lights, cameras, definitions/instances, keyframe animation with a timeline editor, and interactive state-machine actions. The project builds cleanly and passes its automated test suite. A 100-task improvement backlog drives ongoing work.</p>
       </div>
     </div>
 
@@ -133,12 +135,12 @@
       <div class="card">
         <div class="card-icon">📦</div>
         <div class="card-title">Primitive Shapes</div>
-        <div class="card-desc">Box, Sphere, Cylinder, Cone, Plane — all editable in the properties panel with per-axis sizing.</div>
+        <div class="card-desc">Box, Sphere, Cylinder, Cone, Plane, Mesh, plus Torus, Capsule, Disk, Grid, and Ico-sphere — all editable with per-shape properties.</div>
       </div>
       <div class="card">
         <div class="card-icon">🔩</div>
         <div class="card-title">Extrude</div>
-        <div class="card-desc">Sweep 2D cross-sections (rect, circle, polygon, custom) along 5 path types: line, arc, helix, polyline, Bézier.</div>
+        <div class="card-desc">Sweep 2D cross-sections (rect, circle, polygon, star, custom) along 5 path types: line, arc, helix, polyline, Bézier.</div>
       </div>
       <div class="card">
         <div class="card-icon">⚗️</div>
@@ -148,17 +150,27 @@
       <div class="card">
         <div class="card-icon">🎨</div>
         <div class="card-title">PBR Materials</div>
-        <div class="card-desc">Full PBR material editor: base color, metallic, roughness, emissive, normal scale, alpha modes, and 5 texture slots.</div>
+        <div class="card-desc">Full PBR material editor: base color, metallic, roughness, emissive, normal scale, alpha modes, and 5 texture slots with UV mapping control.</div>
       </div>
       <div class="card">
         <div class="card-icon">🎞️</div>
         <div class="card-title">Keyframe Animation</div>
-        <div class="card-desc">Timeline editor with Step, Linear, and Cubic Bézier interpolation. Exports position/rotation/scale to glTF animations.</div>
+        <div class="card-desc">Timeline editor with Step, Linear, and Cubic Bézier interpolation. Animates position, rotation, scale, material properties, and deforms. Exports to glTF animations.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔘</div>
+        <div class="card-title">Interactive Actions</div>
+        <div class="card-desc">State machine system for runtime interactivity: doors that open, levers that toggle, triggered sequences and parallels. Driven by on_load, interact, on_collision, on_signal, and more.</div>
       </div>
       <div class="card">
         <div class="card-icon">📤</div>
         <div class="card-title">glTF/GLB Export</div>
-        <div class="card-desc">Standalone <code>mc3togltf</code> converter outputs glTF 2.0 JSON or self-contained GLB, including animation tracks.</div>
+        <div class="card-desc">Standalone <code>mc3togltf</code> converter outputs glTF 2.0 JSON or self-contained GLB, including animation tracks and embedded textures.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <div class="card-title">Definitions &amp; Instances</div>
+        <div class="card-desc">Define reusable object templates and place multiple instances. Instances can override transform and material per-instance. Convert selected objects into a definition in one click.</div>
       </div>
       <div class="card">
         <div class="card-icon">🌐</div>
@@ -169,6 +181,16 @@
         <div class="card-icon">🔁</div>
         <div class="card-title">Undo/Redo</div>
         <div class="card-desc">20-step deep-copy snapshot stack covering all edit operations: add, delete, transform, duplicate, paste, group, ungroup.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖱️</div>
+        <div class="card-title">Transform Gizmo</div>
+        <div class="card-desc">Move / Rotate / Scale gizmo with Local/World space toggle, live delta overlay while dragging, vertex snapping, and angle snapping (15°/45°/90°).</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Editor Tools</div>
+        <div class="card-desc">Multi-object selection with mixed-value properties, measurement tool, alignment commands, command palette, viewport camera presets, and bounding box display.</div>
       </div>
     </div>
 

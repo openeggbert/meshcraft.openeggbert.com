@@ -36,12 +36,14 @@
       <a href="mc3-objects.html">Object Types</a>
       <a href="mc3-materials.html">Materials &amp; Textures</a>
       <a href="mc3-animation.html">Animation</a>
+      <a href="mc3-interactive.html">Interactive Actions</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Tutorials</div>
       <a href="../tutorials/index.html">All Tutorials</a><a href="../tutorials/minimal-example.html">Minimal Scene</a>
       <a href="../tutorials/loading-scene.html">Loading a Scene</a><a href="../tutorials/csg-operations.html">CSG Operations</a>
       <a href="../tutorials/export-gltf.html">Export to glTF/GLB</a><a href="../tutorials/animation.html">Keyframe Animation</a>
+      <a href="../tutorials/complete-example.html">Complete Scene Example</a>
     </div>
     <div class="nav-section">
       <div class="nav-section-title">Internals</div>
@@ -181,6 +183,39 @@
       </table>
     </div>
 
+    <h2>Coordinates and Units</h2>
+    <p>MC3 uses a <strong>right-handed, Y-up coordinate system</strong> by default — the same convention as glTF 2.0. All lengths are in the unit declared by the <code>unit</code> root attribute (default: <code>meter</code>).</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Axis</th><th>Direction</th></tr></thead>
+        <tbody>
+          <tr><td>+X</td><td>Right</td></tr>
+          <tr><td>+Y</td><td>Up</td></tr>
+          <tr><td>+Z</td><td>Towards viewer (out of screen)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Rotation angles default to <strong>degrees</strong> and use <strong>XYZ Euler</strong> order unless overridden by the <code>rotation_units</code> / <code>euler_order</code> root attributes. The transform matrix per object is:</p>
+    <pre><code>M = T(position + pivot) × Rx × Ry × Rz × S(scale) × T(-pivot)</code></pre>
+    <p>When exporting to glTF the coordinate system is automatically converted to the glTF convention (right-handed, Y-up) and Euler angles are converted to quaternions.</p>
+
+    <h2>Best Practices</h2>
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>Keep scenes human-readable</strong>
+        <ul>
+          <li>Give every object a meaningful <code>name</code>. Animation <code>target</code> attributes and interactive action <code>object</code> references use the name to resolve objects.</li>
+          <li>Give every material and texture a short, stable <code>id</code>. Renaming IDs requires updating all object <code>material</code> attributes that reference them.</li>
+          <li>Prefer <code>&lt;definition&gt;</code> + <code>&lt;instance&gt;</code> over duplicating geometry. Multiple instances share one definition and produce leaner export files.</li>
+          <li>Keep CSG trees shallow. Deep union/difference/intersection chains re-evaluate every ancestor; flatten where possible using exported mesh objects.</li>
+          <li>Use tags (<code>tags="door interactive"</code>) to group objects semantically — MeshCraft's hierarchy filter and interactive action resolver both support tag queries.</li>
+          <li>Set <code>collision="none"</code> explicitly for purely decorative objects. The default is <code>none</code> but making it explicit documents intent.</li>
+          <li>Prefer relative texture URIs (<code>textures/brick.png</code>) over absolute paths so scenes are portable across machines.</li>
+        </ul>
+      </div>
+    </div>
+
     <h2>Minimal Example</h2>
     <pre><code>&lt;?<span class="tag">xml</span> version=<span class="val">"1.0"</span> encoding=<span class="val">"UTF-8"</span>?&gt;
 &lt;<span class="tag">mc3</span> <span class="atr">version</span>=<span class="val">"0.3"</span> <span class="atr">model</span>=<span class="val">"Minimal"</span>&gt;
@@ -213,6 +248,7 @@
       <li><a href="mc3-objects.html">Object Types</a> — all object elements with their attributes</li>
       <li><a href="mc3-materials.html">Materials &amp; Textures</a> — PBR material system</li>
       <li><a href="mc3-animation.html">Animation</a> — <code>&lt;actions&gt;</code> reference</li>
+      <li><a href="mc3-interactive.html">Interactive Actions</a> — state machines and runtime triggers</li>
       <li><a href="../tutorials/minimal-example.html">Tutorial: Minimal Scene</a></li>
     </ul>
 
