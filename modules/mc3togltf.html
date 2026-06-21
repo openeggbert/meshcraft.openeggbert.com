@@ -85,30 +85,51 @@
 
     <h2>Usage</h2>
     <pre><code><span class="cmt"># Export to GLB (binary, self-contained)</span>
-./mc3togltf/build/mc3togltf test/house.mc3.xml test/house.glb
+./cmake-build-debug/mc3togltf/mc3togltf test/house.mc3.xml /tmp/house.glb
 
 <span class="cmt"># Export to glTF JSON (+ external .bin)</span>
-./mc3togltf/build/mc3togltf test/house.mc3.xml test/house.gltf
+./cmake-build-debug/mc3togltf/mc3togltf test/house.mc3.xml /tmp/house.gltf
 
-<span class="cmt"># Omit output path → same name as input, .gltf extension</span>
-./mc3togltf/build/mc3togltf test/house.mc3.xml</code></pre>
+<span class="cmt"># Allow approximate CSG export (children as separate meshes)</span>
+./cmake-build-debug/mc3togltf/mc3togltf --allow-approximate-csg scene.mc3.xml out.glb</code></pre>
 
     <h2>Building</h2>
-    <pre><code>cmake -S mc3togltf -B mc3togltf/build -DCMAKE_BUILD_TYPE=Release
-cmake --build mc3togltf/build --parallel</code></pre>
-    <p>The converter has no dependency on CNA, ImGui, Manifold, or any graphics library. It only requires a C++17 compiler and tinyxml2 (bundled via the mc3 include path).</p>
+    <p><code>mc3togltf</code> is included in the top-level build and builds automatically with <code>ninja -C cmake-build-debug</code>. The binary lands at <code>cmake-build-debug/mc3togltf/mc3togltf</code>.</p>
+    <p>The converter has no dependency on CNA, ImGui, or any graphics library — only the core <code>mc3</code> library and tinyxml2.</p>
+
+    <h2>Export Support Matrix</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Exported</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Box, Cube</td><td>✅</td><td></td></tr>
+          <tr><td>Sphere</td><td>✅</td><td></td></tr>
+          <tr><td>Cylinder, Cone</td><td>✅</td><td></td></tr>
+          <tr><td>Plane</td><td>✅</td><td><code>size</code> is vec2 (W × D)</td></tr>
+          <tr><td>Torus, Capsule, Disk</td><td>✅</td><td></td></tr>
+          <tr><td>Grid, Ico-sphere</td><td>✅</td><td></td></tr>
+          <tr><td>Extrude (all path types)</td><td>✅</td><td></td></tr>
+          <tr><td>Mesh (<code>src=</code> OBJ)</td><td>✅</td><td>OBJ loaded at export time</td></tr>
+          <tr><td>Materials (PBR, textures)</td><td>✅</td><td></td></tr>
+          <tr><td>Lights, Cameras</td><td>✅</td><td></td></tr>
+          <tr><td>Instances (definitions)</td><td>✅</td><td>Expanded to meshes at export</td></tr>
+          <tr><td>Animation: position/rotation/scale</td><td>✅</td><td>Exported as glTF <code>animations[]</code></td></tr>
+          <tr><td>Animation: visible, deform.*, material.*</td><td>❌</td><td>No glTF equivalent; silently skipped</td></tr>
+          <tr><td>CSG (union/difference/intersection)</td><td>⚠️</td><td>Hard fail by default; use <code>--allow-approximate-csg</code> to export children as separate meshes</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <h2>Key Source Files</h2>
     <div class="table-wrap">
       <table>
         <thead><tr><th>File</th><th>Role</th></tr></thead>
         <tbody>
-          <tr><td><code>src/main.cpp</code></td><td>CLI entry point: parse args, call <code>Mc3XmlParser</code>, call <code>GltfExporter</code>, write output.</td></tr>
-          <tr><td><code>src/Mc3XmlParser.hpp/.cpp</code></td><td>Local copy of the MC3 XML parser. Converts XML → in-memory MC3 document struct.</td></tr>
+          <tr><td><code>src/main.cpp</code></td><td>CLI entry point: parse args, call <code>Mc3Document::loadFromFile()</code>, call <code>GltfExporter</code>, write output.</td></tr>
           <tr><td><code>src/GltfExporter.hpp/.cpp</code></td><td>Converts an MC3 document to glTF JSON or GLB. Handles geometry, materials, textures, and animations.</td></tr>
           <tr><td><code>src/MeshBuilder.hpp/.cpp</code></td><td>Tessellates MC3 objects (primitives, extrusions, groups) into triangle meshes for glTF accessors.</td></tr>
           <tr><td><code>src/MathUtils.hpp</code></td><td>Inline math: Euler → quaternion, matrix operations.</td></tr>
-          <tr><td><code>test/gltf_test.py</code></td><td>Python test suite: 38 assertions on the output glTF/GLB JSON.</td></tr>
+          <tr><td><code>test/gltf_test.py</code></td><td>Python test suite: 39 assertions on the output glTF/GLB JSON.</td></tr>
         </tbody>
       </table>
     </div>
@@ -118,7 +139,7 @@ cmake --build mc3togltf/build --parallel</code></pre>
       <pre>
 .mc3.xml
   │
-  ▼ Mc3XmlParser::parse()
+  ▼ Mc3Document::loadFromFile()   (shared core mc3 library)
 MC3 Document (in-memory)
   │
   ▼ GltfExporter::exportDocument()
@@ -149,24 +170,24 @@ MC3 Document (in-memory)
     </ul>
 
     <h2>Test Suite</h2>
-    <p><code>mc3togltf/test/gltf_test.py</code> contains 38 Python assertions. Registered as a CTest test when both Python 3 and the <code>mc3togltf</code> binary are available:</p>
+    <p><code>mc3togltf/test/gltf_test.py</code> contains 39 Python assertions. Registered as a CTest test (top-level build includes mc3togltf):</p>
     <pre><code><span class="cmt"># Run via CTest (from the main cmake-build-debug)</span>
-ctest --test-dir cmake-build-debug -V -R mc3togltf_gltf
+ctest --test-dir cmake-build-debug -V -R mc3togltf
 
 <span class="cmt"># Run directly</span>
 python3 mc3togltf/test/gltf_test.py \
-    mc3togltf/build/mc3togltf \
+    cmake-build-debug/mc3togltf/mc3togltf \
     test/animation_test.mc3.xml \
     test/house.mc3.xml</code></pre>
 
-    <h2>Limitations</h2>
+    <h2>Known Limitations</h2>
     <div class="callout todo">
       <span class="callout-icon">📋</span>
       <div class="callout-body">
         <ul>
-          <li>CSG boolean geometry is <strong>not</strong> evaluated during export — the individual child primitives are exported as separate meshes. True CSG export would require linking Manifold.</li>
-          <li>External OBJ meshes (<code>&lt;mesh src="…"&gt;</code>) are not included in the glTF output — only the MC3 primitive/extrude geometry.</li>
+          <li>CSG boolean geometry is <strong>not</strong> evaluated during export (Manifold not linked). By default, any CSG node causes an error. Pass <code>--allow-approximate-csg</code> to export child primitives as separate meshes instead (geometrically incorrect).</li>
           <li>UV mapping overrides from <code>&lt;uv_mapping&gt;</code> are not yet applied during mesh tessellation.</li>
+          <li><code>visible</code>, <code>deform.*</code>, and <code>material.*</code> animation channels are silently skipped — no glTF equivalent.</li>
         </ul>
       </div>
     </div>

@@ -72,7 +72,7 @@
       <tbody>
         <tr><td><code>name</code></td><td>string</td><td>—</td><td>Object name. Required for animation targets and interactive action references.</td></tr>
         <tr><td><code>position</code></td><td>vec3</td><td><code>0 0 0</code></td><td>World position (X Y Z).</td></tr>
-        <tr><td><code>rotation</code></td><td>vec3</td><td><code>0 0 0</code></td><td>Euler rotation in degrees. Order and units controlled by root <code>euler_order</code> / <code>rotation_units</code>. Default: XYZ extrinsic.</td></tr>
+        <tr><td><code>rotation</code></td><td>vec3</td><td><code>0 0 0</code></td><td>Euler rotation in degrees, applied XYZ order.</td></tr>
         <tr><td><code>scale</code></td><td>vec3</td><td><code>1 1 1</code></td><td>Scale per axis.</td></tr>
         <tr><td><code>pivot</code></td><td>vec3</td><td><code>0 0 0</code></td><td>Rotation/scale pivot offset in local space. Essential for doors, lids, and levers.</td></tr>
         <tr><td><code>material</code></td><td>IDREF</td><td>—</td><td>Reference to a material <code>id</code> declared in <code>&lt;materials&gt;</code>.</td></tr>
@@ -80,6 +80,7 @@
         <tr><td><code>collision</code></td><td>string</td><td><code>none</code></td><td>Physics collision type: <code>none</code>, <code>static</code>, <code>dynamic</code>, <code>kinematic</code>, <code>trigger</code>.</td></tr>
         <tr><td><code>tags</code></td><td>string</td><td>—</td><td>Space-separated tag list (e.g., <code>"door interactive wood"</code>).</td></tr>
         <tr><td><code>role</code></td><td>string</td><td>—</td><td><code>cutter</code> — marks this object as a subtractor inside a <code>&lt;difference&gt;</code> CSG node.</td></tr>
+        <tr><td><code>layer</code></td><td>string</td><td>—</td><td>Named layer for visibility grouping. Empty means the default layer.</td></tr>
         <tr><td><code>state</code></td><td>string</td><td>—</td><td>Initial active state name (must match an <code>id</code> in the object's <code>&lt;states&gt;</code> block).</td></tr>
       </tbody>
     </table></div>
@@ -223,6 +224,29 @@
         <tr><td><code>radius</code></td><td>float</td><td><code>0.5</code></td><td>Outer radius.</td></tr>
         <tr><td><code>inner_radius</code></td><td>float</td><td><code>0</code></td><td>Inner hole radius. 0 = solid disc.</td></tr>
         <tr><td><code>segments</code></td><td>int</td><td><code>24</code></td><td>Circumference subdivisions.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3><code>&lt;grid&gt;</code></h3>
+    <p>Flat subdivided plane (N×M quads) useful as a ground or reference surface. Unlike <code>&lt;plane&gt;</code>, a grid has configurable subdivision for deformation or displacement.</p>
+    <pre><code>&lt;<span class="tag">grid</span> <span class="atr">name</span>=<span class="val">"Ground"</span> <span class="atr">size</span>=<span class="val">"10 10"</span> <span class="atr">subdivisions_x</span>=<span class="val">"10"</span> <span class="atr">subdivisions_z</span>=<span class="val">"10"</span>/&gt;</code></pre>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Attribute</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>size</code></td><td>vec2</td><td><code>1 1</code></td><td>Width × depth (X × Z).</td></tr>
+        <tr><td><code>subdivisions_x</code></td><td>int</td><td><code>1</code></td><td>Number of columns.</td></tr>
+        <tr><td><code>subdivisions_z</code></td><td>int</td><td><code>1</code></td><td>Number of rows.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3><code>&lt;icosphere&gt;</code></h3>
+    <p>Sphere with uniformly distributed triangles (no pole singularity). Higher subdivision gives a rounder result with fewer shading artifacts than a UV sphere at the same polygon count.</p>
+    <pre><code>&lt;<span class="tag">icosphere</span> <span class="atr">name</span>=<span class="val">"Ball"</span> <span class="atr">radius</span>=<span class="val">"0.5"</span> <span class="atr">subdivisions</span>=<span class="val">"3"</span>/&gt;</code></pre>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Attribute</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>radius</code></td><td>float</td><td><code>0.5</code></td><td>Sphere radius.</td></tr>
+        <tr><td><code>subdivisions</code></td><td>int</td><td><code>3</code></td><td>Refinement iterations. Each step ×4 triangles: 0=20, 1=80, 2=320, 3=1280 faces.</td></tr>
       </tbody>
     </table></div>
 

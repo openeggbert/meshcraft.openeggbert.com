@@ -63,9 +63,9 @@
   <div class="page-body">
     <div class="page-header">
       <h1>MC3 Format Reference</h1>
-      <p class="subtitle">Version 0.3 &mdash; XML-based 3D scene format native to MeshCraft and the OpenEggbert project.</p>
+      <p class="subtitle">Version 0.1 &mdash; XML-based 3D scene format native to MeshCraft and the OpenEggbert project.</p>
       <div class="tags">
-        <span class="badge done">v0.3</span>
+        <span class="badge done">v0.1</span>
         <span class="badge done">UTF-8 XML</span>
         <span class="badge done">.mc3.xml extension</span>
       </div>
@@ -82,26 +82,20 @@
     </div>
 
     <h2>Root Element</h2>
-    <pre><code>&lt;<span class="tag">mc3</span> <span class="atr">version</span>=<span class="val">"0.3"</span>
+    <pre><code>&lt;<span class="tag">mc3</span> <span class="atr">version</span>=<span class="val">"0.1"</span>
      <span class="atr">model</span>=<span class="val">"MyScene"</span>
      <span class="atr">unit</span>=<span class="val">"meter"</span>
-     <span class="atr">coordinate_system</span>=<span class="val">"right_handed_y_up"</span>
-     <span class="atr">rotation_units</span>=<span class="val">"degrees"</span>
-     <span class="atr">euler_order</span>=<span class="val">"XYZ"</span>
-     <span class="atr">default_camera</span>=<span class="val">"Main"</span>&gt;
+     <span class="atr">coordinate_system</span>=<span class="val">"right_handed_y_up"</span>&gt;
   …
 &lt;/<span class="tag">mc3</span>&gt;</code></pre>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Attribute</th><th>Values</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>version</code></td><td>string</td><td><code>0.3</code></td><td>Format version</td></tr>
-          <tr><td><code>model</code></td><td>string</td><td>—</td><td>Scene/model name</td></tr>
+          <tr><td><code>version</code></td><td>string</td><td><code>0.1</code></td><td>Format version</td></tr>
+          <tr><td><code>model</code></td><td>string</td><td><code>"unnamed"</code></td><td>Scene/model name</td></tr>
           <tr><td><code>unit</code></td><td><code>meter</code> | <code>centimeter</code> | <code>inch</code></td><td><code>meter</code></td><td>World unit</td></tr>
-          <tr><td><code>coordinate_system</code></td><td><code>right_handed_y_up</code> | <code>right_handed_z_up</code></td><td><code>right_handed_y_up</code></td><td>Coordinate convention</td></tr>
-          <tr><td><code>rotation_units</code></td><td><code>degrees</code> | <code>radians</code></td><td><code>degrees</code></td><td>Units for all rotation attributes</td></tr>
-          <tr><td><code>euler_order</code></td><td><code>XYZ</code> | <code>XZY</code> | <code>YXZ</code> | …</td><td><code>XYZ</code></td><td>Euler composition order</td></tr>
-          <tr><td><code>default_camera</code></td><td>string</td><td>—</td><td>Name of the default camera</td></tr>
+          <tr><td><code>coordinate_system</code></td><td><code>right_handed_y_up</code></td><td><code>right_handed_y_up</code></td><td>Coordinate convention (Y-up, right-handed)</td></tr>
         </tbody>
       </table>
     </div>
@@ -160,11 +154,12 @@
           <tr><td><code>visible</code></td><td>boolean</td><td><code>true</code></td><td>Visibility</td></tr>
           <tr><td><code>collision</code></td><td>string</td><td><code>none</code></td><td>Collision shape hint</td></tr>
           <tr><td><code>tags</code></td><td>string</td><td>—</td><td>Space-separated tag list</td></tr>
+          <tr><td><code>layer</code></td><td>string</td><td>—</td><td>Named layer for visibility grouping (empty = default layer)</td></tr>
           <tr><td><code>role</code></td><td><code>cutter</code></td><td>—</td><td>Marks as CSG cutter inside <code>&lt;difference&gt;</code></td></tr>
         </tbody>
       </table>
     </div>
-    <p><strong>Transform order:</strong> <code>T(position + pivot) × R(rotation) × S(scale) × T(-pivot)</code></p>
+    <p><strong>Transform order:</strong> <code>T(position + pivot) × R(rotation) × S(scale) × T(-pivot)</code>. All rotation angles are in degrees, applied XYZ Euler order.</p>
 
     <h2>Value Formats</h2>
     <div class="table-wrap">
@@ -218,7 +213,7 @@
 
     <h2>Minimal Example</h2>
     <pre><code>&lt;?<span class="tag">xml</span> version=<span class="val">"1.0"</span> encoding=<span class="val">"UTF-8"</span>?&gt;
-&lt;<span class="tag">mc3</span> <span class="atr">version</span>=<span class="val">"0.3"</span> <span class="atr">model</span>=<span class="val">"Minimal"</span>&gt;
+&lt;<span class="tag">mc3</span> <span class="atr">version</span>=<span class="val">"0.1"</span> <span class="atr">model</span>=<span class="val">"Minimal"</span>&gt;
 
   &lt;<span class="tag">environment</span>&gt;
     &lt;<span class="tag">background</span> <span class="atr">color</span>=<span class="val">"0.4 0.6 0.9"</span>/&gt;

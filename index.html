@@ -109,7 +109,7 @@
       <span class="callout-icon">ℹ️</span>
       <div class="callout-body">
         <strong>Status</strong>
-        <p>MeshCraft is under active development. Core features are implemented and working: all primitive shapes (including Torus, Capsule, Disk, Grid, Ico-sphere), extrusion, CSG booleans, PBR materials, textures, lights, cameras, definitions/instances, keyframe animation with a timeline editor, and interactive state-machine actions. The project builds cleanly and passes its automated test suite. A 100-task improvement backlog drives ongoing work.</p>
+        <p>MeshCraft is under active development. ~72 of 100 planned tasks are done. Working features include all primitive shapes (Box, Sphere, Cylinder, Cone, Plane, Torus, Capsule, Disk, Grid, Ico-sphere), extrusion (5 path types, 5 cross-section types), CSG booleans, PBR materials and textures, keyframe animation timeline (with material/deform channels), named layers, first-person walk mode, proportional editing, scatter along curve, procedural LOD, fog rendering, bloom post-process pipeline, and the MCB binary format. The project builds cleanly with all CTests passing.</p>
       </div>
     </div>
 
@@ -173,6 +173,16 @@
         <div class="card-desc">Define reusable object templates and place multiple instances. Instances can override transform and material per-instance. Convert selected objects into a definition in one click.</div>
       </div>
       <div class="card">
+        <div class="card-icon">🚶</div>
+        <div class="card-title">First-Person Walk Mode</div>
+        <div class="card-desc">Press F5 to enter first-person exploration of your scene. WASD to move, mouse to look, Ctrl to jump. Gravity included. Press Esc or the HUD button to exit.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <div class="card-title">MCB Binary Format</div>
+        <div class="card-desc">Compact binary runtime format (<code>.mcb</code>) for fast scene loading. The <code>mc3tomcb</code> CLI converts <code>.mc3.xml</code> ↔ <code>.mcb</code> in both directions.</div>
+      </div>
+      <div class="card">
         <div class="card-icon">🌐</div>
         <div class="card-title">Web/WASM Build</div>
         <div class="card-desc">Emscripten build produces a browser-ready <code>MeshCraft.html</code> with IDBFS persistent storage.</div>
@@ -215,7 +225,6 @@
         <tbody>
           <tr><td><strong>CNA</strong></td><td>XNA-like C++ runtime: windowing, input, audio, graphics abstraction (SDL3 + OpenGL ES 3.2)</td><td>Sibling repo <code>../cna</code></td></tr>
           <tr><td><strong>sharp-runtime</strong></td><td>C++ System layer (math: Matrix, Vector3, …) used by CNA</td><td>Sibling repo <code>../sharp-runtime</code></td></tr>
-          <tr><td><strong>Nova3D</strong></td><td>3D engine on top of CNA; used for viewport rendering</td><td>Sibling repo <code>../nova-3d</code></td></tr>
           <tr><td><strong>Dear ImGui v1.91.6</strong></td><td>Immediate-mode UI for all editor panels</td><td>FetchContent from GitHub</td></tr>
           <tr><td><strong>Manifold v3</strong></td><td>CSG boolean mesh evaluation</td><td>FetchContent from GitHub</td></tr>
           <tr><td><strong>tinyobjloader v2</strong></td><td>OBJ mesh loading for viewport preview</td><td>FetchContent from GitHub</td></tr>
@@ -229,22 +238,22 @@
 ├── src/MeshCraft/          Main editor application (C++)
 ├── include/MeshCraft/      Public headers
 ├── mc3/                    Pure-C++ MC3 format library (sublibrary)
-├── mc3togltf/              Standalone CLI converter: MC3 → glTF/GLB
+├── mcb/                    MCB binary format library (sublibrary)
+├── mc3togltf/              CLI converter: MC3 → glTF/GLB
+├── mc3tomcb/               CLI converter: MC3 ↔ MCB
 ├── Mc3Format/              Format specification markdown docs
 ├── test/                   Test scenes (.mc3.xml) and smoke test
 ├── cmake/                  Platform-specific CMake helpers
 └── CMakeLists.txt          Top-level build script</code></pre>
 
     <h2>Quick Start</h2>
-    <pre><code><span class="cmt"># Prerequisites: CMake 3.21+, GCC 13+ or Clang 16+, sibling repos cna / sharp-runtime / nova-3d</span>
+    <pre><code><span class="cmt"># Prerequisites: CMake 3.21+, GCC 13+ or Clang 16+, sibling repos cna / sharp-runtime</span>
 
 <span class="cmt"># Configure (first time)</span>
-cmake -S . -B cmake-build-debug \
-      -DCMAKE_BUILD_TYPE=Debug \
-      -DMESH_CRAFT_GRAPHICS_BACKEND=EASYGL
+cmake -S . -B cmake-build-debug
 
-<span class="cmt"># Build</span>
-cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)
+<span class="cmt"># Build everything (editor + mc3togltf + mc3tomcb)</span>
+ninja -C cmake-build-debug
 
 <span class="cmt"># Run with a test scene</span>
 ./cmake-build-debug/MeshCraft test/house.mc3.xml</code></pre>

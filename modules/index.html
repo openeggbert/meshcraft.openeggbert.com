@@ -87,7 +87,12 @@
       <a href="mc3togltf.html" class="card">
         <div class="card-icon">📤</div>
         <div class="card-title">mc3togltf</div>
-        <div class="card-desc">Standalone CLI converter that reads <code>.mc3.xml</code> and writes glTF 2.0 JSON or GLB. Located in <code>mc3togltf/</code>.</div>
+        <div class="card-desc">CLI converter: <code>.mc3.xml</code> → glTF 2.0 JSON or GLB. Built as part of the top-level build. Located in <code>mc3togltf/</code>.</div>
+      </a>
+      <a href="mc3togltf.html" class="card">
+        <div class="card-icon">🗜️</div>
+        <div class="card-title">mc3tomcb</div>
+        <div class="card-desc">CLI converter for the MCB binary format: <code>.mc3.xml</code> ↔ <code>.mcb</code>. MCB is a compact binary format for fast runtime loading. Located in <code>mc3tomcb/</code>.</div>
       </a>
       <a href="editor.html" class="card">
         <div class="card-icon">🖱️</div>
@@ -119,10 +124,14 @@ MeshCraftApplication
   ├── PropertiesPanel    (Scene module)
   └── Mc3Document        (MC3 Library) ── Mc3XmlParser, Mc3XmlWriter
 
-mc3togltf (separate binary)
-  ├── Mc3XmlParser       (local copy)
+mc3togltf (built with top-level CMake)
+  ├── Mc3Document        (shared core mc3 library)
   ├── MeshBuilder
   └── GltfExporter
+
+mc3tomcb (built with top-level CMake)
+  ├── Mc3Document        (shared core mc3 library)
+  └── Mcb                (MCB binary format library)
 </pre>
     </div>
 

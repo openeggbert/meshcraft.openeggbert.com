@@ -100,6 +100,13 @@
 
     <h2>Prerequisites</h2>
 
+    <h3>Sibling Repositories</h3>
+    <p>These two repos must exist <em>next to</em> <code>mesh-craft/</code>:</p>
+    <ul>
+      <li><strong>cna</strong> — XNA-like C++ runtime (SDL3 + OpenGL ES 3.2)</li>
+      <li><strong>sharp-runtime</strong> — C++ math and system layer</li>
+    </ul>
+
     <h3>Compiler</h3>
     <p>MeshCraft requires a C++23-capable compiler:</p>
     <div class="table-wrap">
@@ -131,16 +138,15 @@
     </div>
 
     <h2>Cloning the Repositories</h2>
-    <p>MeshCraft depends on three sibling repositories that must exist <em>next to</em> the <code>mesh-craft</code> directory:</p>
+    <p>MeshCraft depends on two sibling repositories that must exist <em>next to</em> the <code>mesh-craft</code> directory:</p>
     <pre><code>mkdir openeggbert && cd openeggbert
 
 git clone https://github.com/openeggbert/cna
 git clone https://github.com/openeggbert/sharp-runtime
-git clone https://github.com/openeggbert/nova-3d
 git clone https://github.com/openeggbert/mesh-craft
 
 ls
-<span class="cmt"># cna  sharp-runtime  nova-3d  mesh-craft</span></code></pre>
+<span class="cmt"># cna  sharp-runtime  mesh-craft</span></code></pre>
 
     <div class="callout warn">
       <span class="callout-icon">⚠️</span>
@@ -153,15 +159,19 @@ ls
     <h2>Configuring and Building</h2>
     <pre><code>cd mesh-craft
 
-<span class="cmt"># Configure with the default EasyGL backend (Linux desktop)</span>
-cmake -S . -B cmake-build-debug \
-      -DCMAKE_BUILD_TYPE=Debug \
-      -DMESH_CRAFT_GRAPHICS_BACKEND=EASYGL
+<span class="cmt"># Configure</span>
+cmake -S . -B cmake-build-debug
 
-<span class="cmt"># Build (all CPU cores)</span>
-cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)</code></pre>
+<span class="cmt"># Build everything: editor + mc3togltf + mc3tomcb (all CPU cores)</span>
+ninja -C cmake-build-debug</code></pre>
 
     <p>The first build downloads ImGui, Manifold, and tinyobjloader via CMake's <code>FetchContent</code>. This requires internet access. Subsequent builds use the cached downloads.</p>
+    <div class="callout note">
+      <span class="callout-icon">ℹ️</span>
+      <div class="callout-body">
+        <p>If you add new <code>.cpp</code> files after the initial configure, run <code>cmake -S . -B cmake-build-debug -DFETCHCONTENT_UPDATES_DISCONNECTED=ON</code> to re-scan the source tree.</p>
+      </div>
+    </div>
 
     <h2>Running the Editor</h2>
     <pre><code><span class="cmt"># Open an empty new scene</span>
@@ -267,6 +277,20 @@ cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)</code></pre>
           <tr><td><code>K</code></td><td>Insert keyframe for selected object at current time</td></tr>
           <tr><td><code>Ctrl+P</code></td><td>Open Command Palette (search objects and commands)</td></tr>
           <tr><td><code>M</code></td><td>Activate Measurement Tool (click two points to show distance)</td></tr>
+          <tr><td><code>F5</code></td><td>Enter / exit first-person Walk Mode</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Walk Mode Controls (while active)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Input</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>W / A / S / D</code> or Arrow keys</td><td>Move forward / left / back / right</td></tr>
+          <tr><td>Mouse move</td><td>Look around (yaw + pitch)</td></tr>
+          <tr><td><code>Ctrl</code></td><td>Jump</td></tr>
+          <tr><td><code>Esc</code> or "Exit Walk Mode" HUD button</td><td>Return to editor</td></tr>
         </tbody>
       </table>
     </div>
@@ -289,13 +313,29 @@ cmake --build cmake-build-debug --target MeshCraft -- -j$(nproc)</code></pre>
       </table>
     </div>
 
-    <h2>Building the mc3togltf Converter</h2>
-    <p>The <code>mc3togltf</code> converter is a standalone binary required for <strong>File → Export GLB</strong>. It has its own CMake build:</p>
-    <pre><code>cmake -S mc3togltf -B mc3togltf/build -DCMAKE_BUILD_TYPE=Release
-cmake --build mc3togltf/build --parallel
+    <h2>CLI Tools</h2>
+    <p>Both converter tools are built as part of the top-level build (<code>ninja -C cmake-build-debug</code>) and land in <code>cmake-build-debug/</code>:</p>
 
-<span class="cmt"># Test conversion</span>
-./mc3togltf/build/mc3togltf test/house.mc3.xml test/house.glb</code></pre>
+    <h3>mc3togltf — Export to glTF/GLB</h3>
+    <pre><code><span class="cmt"># Export scene to GLB</span>
+./cmake-build-debug/mc3togltf/mc3togltf test/house.mc3.xml /tmp/house.glb
+
+<span class="cmt"># Export with approximate CSG (children exported as separate meshes)</span>
+./cmake-build-debug/mc3togltf/mc3togltf --allow-approximate-csg scene.mc3.xml out.glb</code></pre>
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <p>By default, any scene containing CSG nodes (<code>&lt;union&gt;</code>, <code>&lt;difference&gt;</code>, <code>&lt;intersection&gt;</code>) causes mc3togltf to exit with an error. Pass <code>--allow-approximate-csg</code> to export children as separate meshes instead (geometrically incorrect but useful for review).</p>
+      </div>
+    </div>
+
+    <h3>mc3tomcb — Convert to/from MCB Binary</h3>
+    <p>MCB is a compact binary format (<code>.mcb</code>) for fast runtime loading. The converter works in both directions:</p>
+    <pre><code><span class="cmt"># XML → MCB (for runtime use)</span>
+./cmake-build-debug/mc3tomcb/mc3tomcb scene.mc3.xml scene.mcb
+
+<span class="cmt"># MCB → XML (to inspect or edit a binary scene)</span>
+./cmake-build-debug/mc3tomcb/mc3tomcb scene.mcb scene.mc3.xml</code></pre>
 
     <h2>Running the Tests</h2>
     <pre><code>ctest --test-dir cmake-build-debug -V</code></pre>
